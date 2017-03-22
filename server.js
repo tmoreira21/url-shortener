@@ -24,16 +24,18 @@ app.get('/new/*', function(req,res){
     mongo.connect('mongodb://localhost:27017/url-shortener', 
     	function(err, db) {
     		if (err) throw err;
-    		obj1 = { "original_url": originalUrl, "short_url": newUrl };
-    		db.urls.insert(obj1,function(err,data){
+    		obj1 = { 'original_url': originalUrl, 'short_url': newUrl };
+    		var collection = db.collection("urls");
+    		collection.insert(obj1,function(err,data){
     			if(err) throw err;
     			db.close();
+    			res.send(JSON.stringify({  "original_url":originalUrl, "short_url":"https://" + req.get('host') + "/" + newUrl }));
     		});
     	}
     );
     /*obj[newUrl] = originalUrl;
     var obj1 = {  "original_url":originalUrl, "short_url":"https://" + req.get('host') + "/" + newUrl };*/
-    res.send(JSON.stringify(obj1));
+    //res.send(JSON.stringify(obj1));
 });
  
 app.get('/:numbr', function(req,res){
@@ -41,14 +43,14 @@ app.get('/:numbr', function(req,res){
     	function(err, db) {
     		if (err) throw err
     		var collection = db.collection("urls");
-    		
     		collection.find( { 
     		    "short_url": req.params.numbr.toString() 
-    		} ).toArray(function(err, documents) {
+    		} ).toArray(function(err, documents){
     			if (err) throw err;
-        		 	console.log(documents);
+    			db.close();
+    			console.log(documents[0].original_url);
+        		res.redirect(documents[0].original_url);
     		});
-    		db.close();
     	}
     );
     //res.redirect(obj[req.params.numbr]);
