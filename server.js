@@ -1,6 +1,5 @@
 var express = require('express');
 var app = express();
-var obj = {};
 var url = require('url');
 var mongo = require('mongodb').MongoClient;
 
@@ -33,9 +32,6 @@ app.get('/new/*', function(req,res){
     		});
     	}
     );
-    /*obj[newUrl] = originalUrl;
-    var obj1 = {  "original_url":originalUrl, "short_url":"https://" + req.get('host') + "/" + newUrl };*/
-    //res.send(JSON.stringify(obj1));
 });
  
 app.get('/:numbr', function(req,res){
@@ -48,12 +44,10 @@ app.get('/:numbr', function(req,res){
     		} ).toArray(function(err, documents){
     			if (err) throw err;
     			db.close();
-    			console.log(documents[0].original_url);
         		res.redirect(documents[0].original_url);
     		});
     	}
     );
-    //res.redirect(obj[req.params.numbr]);
 });
 
 app.listen(8080, function(){
